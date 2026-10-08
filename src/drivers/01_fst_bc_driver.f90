@@ -113,10 +113,18 @@ contains
       call json_get_or_default(params, "case.FST.t_start", t_start, 0.0_dp)
       call json_get(params, "case.FST.t_ramp", t_ramp)
 
+      ! Read the path to the output files and create the directory if it does not exist
+      call json_get_or_default(params, 'case.FST.files_output_path', PATH, &
+          "./FST_output_files")
+      call system("mkdir -p " // trim(PATH))
+
       if (READ_FROM_FILES) then
 
         call json_get(params, "case.FST.read_files_path", read_path)
-
+        if (trim(PATH) == trim(read_path)) then
+          call neko_error("Output path for FST files cannot be the same as the input path!")
+        end if
+        
         if (params%valid_path("case.FST.Uinf")) then
 
           call json_get(params, "case.FST.Uinf", Uinf)
@@ -153,10 +161,6 @@ contains
       end if
 
     end block
-
-    call json_get_or_default(params, 'case.FST.files_output_path', PATH, &
-         "./FST_output_files")
-    call system("mkdir -p " // trim(PATH))
 
   end subroutine fst_bc_driver_initialize
 
