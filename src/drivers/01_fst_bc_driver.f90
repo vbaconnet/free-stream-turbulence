@@ -116,7 +116,7 @@ contains
       ! Read the path to the output files and create the directory if it does not exist
       call json_get_or_default(params, 'case.FST.files_output_path', PATH, &
           "./FST_output_files")
-      call system("mkdir -p " // trim(PATH))
+      call execute_command_line("mkdir -p " // trim(PATH))
 
       if (READ_FROM_FILES) then
 

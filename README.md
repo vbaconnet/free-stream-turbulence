@@ -93,7 +93,7 @@ end module user
 
 ---
 
-## Compilation
+## Compilation 
 
 Compilation relies on the neko-generated script `makeneko`. Helper scripts 
 are provided to compile on CPU and GPU backends: `makeneko_cpu` 
@@ -154,15 +154,10 @@ cd examples/box
 We define the following variables:
 
 - $U_\infty$, the free-stream velocity.
-- $Tu$, the turbulence intensity, defined as
-
-  $$ Tu = \frac{u'}{U_\infty} $$
-
+- $Tu$, the turbulence intensity, defined as $ Tu = u'/U_\infty $
 - $q$, the turbulent kinetic energy (TKE), defined as
 
-  $$
-  q = \frac{3}{2}u'^2=\frac{3}{2}(U_\infty Tu)^2
-  $$
+$$ q = \frac{3}{2}u'^2=\frac{3}{2}(U_\infty Tu)^2 $$
 
 - $L$, the turbulent length scale.
 - $\mathbf{k}$, the total wavenumber $\mathbf{k}=(k_x, k_y, k_z)$, with $|\mathbf{k}|=k$.
@@ -181,61 +176,62 @@ $$\mathbf{u}_{FST}(\mathbf{x}, t) = \sum_{n=1}^{N} \hat{\mathbf{u}}_n A_n\sin(\m
 
 Where:
 - $\mathbf{U}_c=(U_\infty,0,0)$ the convective velocity
-- $\hat{\mathbf{u}}_n$ are divergence-free unit vectors, i.e. $||\hat{\mathbf{u}}_n||=1$ and $\nabla \cdot \hat{\mathbf{u}}_n=0$
+- $\hat{\mathbf{u}}_n$ are divergence-free unit vectors, i.e. $|\hat{\mathbf{u}}_n|=1$ and $\nabla \cdot \hat{\mathbf{u}}_n=0$
 - $\phi_n$ are randomly generated phase shifts in $[0, 2\pi]$
 - $A_n$ are the amplitudes of each mode, computed as
 
-  $$
+$$
   \frac{A_n^2}{2}=\frac{2}{M}E(k_n,L,q_0)\Delta k_n.
-  $$
+$$
   
   Here, $M$ is the total number of points per shell. For a given shell, 
   we distribute the amplitude uniformly over all the modes in said shell. The above equation
   can be retrieved based on the equality (definition)
 
-  $$
+$$
   \int_{0}^{\infty}{E(k,L,q)} = q = \frac{1}{2}\langle u_i^2\rangle
-  $$
+$$
+
   and inserting the equation for $\mathbf{u}_{FST}$.
 
 - Note the use of $q_0$ instead of $q$ for the generation of amplitudes. This is because of the above equality
 
-  $$
+$$
   \int_{0}^{\infty}{E(k,L,q)dk} = q.
-  $$
+$$
 
   Because we discretize the spectrum in the interval $[k_{start}; k_{end}]$,
   if we integrate this discretized spectrum we only get an approximation of 
   the integral:
 
-  $$
+$$
   \int_{0}^{\infty}{E(k,L,q)dk} \simeq \int_{k_{start}}^{k_{end}}{E(k,L,q)dk} = \sum_{n=1}^{N} E(k_n)\Delta k_n
-  $$
+$$
 
   and consequently we do not recover the TKE by integrating the spectrum, i.e.
 
-  $$
+$$
   \sum_{n=1}^{N} E(k_n,L,q)\Delta k_n \ne q.
-  $$
+$$
 
   To fix this problem we search for a $q_0$ such that 
 
-  $$
+$$
   \sum_{n=1}^{N} E(k_n,L,q_0)\Delta k_n = q.
-  $$
+$$
 
   Thankfully, the Von Karman spectra is linear in $q$, therefore we can take 
   replace
 
-  $$
+$$
   E(k,L,q_0) = q_0 E(k,L,1),
-  $$
+$$
 
   and find the expression for $q_0$,
 
-  $$
-  q_0 = \frac{q}{\sum_{n=1}^{N} E(k_n,L,1)\Delta k_n} = \frac{3/2(U_\infty Tu)^2}{\sum_{n=1}^{N} E(k_n,L,1)\Delta k_n}
-  $$
+$$
+ q_0 = \frac{q}{\sum_{n=1}^{N} E(k_n,L,1)\Delta k_n} = \frac{3/2(U_\infty Tu)^2}{\sum_{n=1}^{N} E(k_n,L,1)\Delta k_n}
+$$
 
 ### Fringe Function
 
@@ -244,6 +240,7 @@ The spatial fringe ensures smooth blending at boundaries:
 $$\lambda(y,z) = \lambda_y(y) \cdot \lambda_z(z),\quad \lambda_u = S\left(\frac{u - u_{start}}{\delta_{rise}}\right) - S\left(\frac{u - u_{end}}{\delta_{fall}} + 1\right)$$
 
 With the smooth step function:
+
 $$S(x) = \begin{cases} 0 & x \leq 0 \\ 1 & x \geq 1 \\ \frac{1}{1 + e^{1/(x-1) + 1/x}} & \text{otherwise} \end{cases}$$
 
 Where $\delta_{rise} = \delta_{fall} = \alpha \cdot L_u$ and $L_u$ is the domain length.
@@ -464,7 +461,7 @@ on 32 bits.
 
 ## References
 
-- Schlatter, P. (2001). *Spectral simulation of turbulent flow in a channel with inlet turbulence*. PhD thesis, KTH Royal Institute of Technology.
+- Schlatter, P. (2001). *Spectral simulation of turbulent flow in a channel with inlet turbulence*. Masters' thesis, KTH Royal Institute of Technology.
 - Original implementation by Elektra Kluesberg, Prabal Negi, and Philipp Schlatter.
 
 ---

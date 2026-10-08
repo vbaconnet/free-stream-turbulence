@@ -3,20 +3,21 @@
 usage() {
 
   echo "Usage"
-  echo "./makeneko_gpu <user file> <path to neko install> <hip or cuda> <path to src folder>"
+  echo "./makeneko_gpu <user file> <path to neko install> <hip or cuda> <path to src folder> <dest. path of executable>"
   echo ""
   echo "Example"
-  echo "./makeneko_gpu swept-wing.f90 /cfs/klemming/scratch/y/ycl/Neko/neko hip ./src"
+  echo "./makeneko_gpu swept-wing.f90 /cfs/klemming/scratch/y/ycl/Neko/neko hip ./src my/install/folder"
 
 }
 
 NEKO_INSTALL_PATH=${2}
 which_gpu=${3}
 src_path=${4}
+exec_path=${5:-"."}
 
 # Check if exactly 4 arguments are given
-if [ "$#" -ne 4 ]; then
-  echo "Error: Exactly 4 arguments are required."
+if [ "$#" -lt 4 ]; then
+  echo "Error: Wrong number of arguments."
   usage
   exit
 fi
@@ -78,4 +79,11 @@ extras="${src_path}/extras/0*"
 echo $NEKO_INSTALL_PATH/bin/makeneko $backend $interface $fst_core $driver $extras $1
 ./dummy_makeneko $utils $backend $interface $fst_core $driver $extras $1
 
+if [ "${exec_path}" != "." ]; then
+   mv neko ${exec_path}/neko
+fi
+echo "Successful compilation."
+echo "Path to neko executable: ${exec_path}/neko"
+
 rm dummy_makeneko
+rm *.mod *.smod
