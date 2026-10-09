@@ -121,7 +121,9 @@ contains
       if (READ_FROM_FILES) then
 
         call json_get(params, "case.FST.read_files_path", read_path)
-        if (trim(PATH) == trim(read_path)) then
+        call neko_log%message("Reading FST files from : " // trim(read_path))
+        call neko_log%message("Outputting FST files to: " // trim(PATH))
+        if (normalize_path(PATH) == normalize_path(read_path)) then
           call neko_error("Output path for FST files cannot be the same as the input path!")
         end if
         
@@ -216,5 +218,37 @@ contains
     call FST_OBJ%free()
 
   end subroutine fst_bc_driver_finalize
+
+  !> Strip leading "./" (including slashes following it, e.g. ".//path")
+  !! and trailing "/" from a path, so that e.g. "./FST_output_files" and
+  !! "FST_output_files" compare equal.
+  function normalize_path(path) result(normalized)
+    character(len=*), intent(in) :: path
+    character(len=:), allocatable :: normalized
+    logical :: stripped_dot
+
+    normalized = trim(adjustl(path))
+    stripped_dot = .false.
+    do while (len_trim(normalized) > 0)
+       if (len_trim(normalized) > 1 .and. normalized(1:2) == "./") then
+          normalized = normalized(3:)
+          stripped_dot = .true.
+       else if (stripped_dot .and. normalized(1:1) == "/") then
+          normalized = normalized(2:)
+       else
+          exit
+       end if
+    end do
+
+    do while (len_trim(normalized) > 1)
+       if (normalized(len_trim(normalized):) == "/") then
+          normalized = normalized(:len_trim(normalized)-1)
+       else
+          exit
+       end if
+    end do
+    normalized = trim(normalized)
+
+  end function normalize_path
 
 end module fst_bc_driver
