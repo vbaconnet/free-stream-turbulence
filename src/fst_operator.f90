@@ -34,7 +34,7 @@
 module fst_operator
   use neko_config, only : NEKO_BCKND_SX, NEKO_BCKND_DEVICE, NEKO_BCKND_XSMM, &
        NEKO_DEVICE_MPI
-  use num_types, only : rp, xp, dp
+  use num_types, only : rp, xp
   use opr_fst_cpu, only: opr_fst_cpu_fst
   use opr_fst_device, only: opr_fst_device_fst
   use device, only: device_get_ptr
@@ -57,7 +57,7 @@ contains
     real(kind=xp), intent(in), dimension(:) :: wavenumbers_x, shell_amplitudes, &
          fringe_space
     real(kind=xp), intent(in), dimension(:,:) :: phi_0, random_vectors
-    real(kind=dp), intent(in) :: t
+    real(kind=rp), intent(in) :: t
     real(kind=xp), intent(in) :: Uinf, fringe_time, angleXY
     logical, intent(in) :: on_host
 

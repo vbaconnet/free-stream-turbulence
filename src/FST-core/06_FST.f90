@@ -14,7 +14,7 @@ module FST
   use logger, only: LOG_SIZE, neko_log
   use field, only: field_t
   use coefs, only: coef_t
-  use num_types, only: rp, dp, xp
+  use num_types, only: rp, xp
   use utils, only: neko_error
   use point_zone, only: point_zone_t
   use comm, only: pe_rank
@@ -63,8 +63,8 @@ module FST
      real(kind=xp) :: fringe_max
 
      !> Final ramp time
-     real(kind=dp) :: t_end
-     real(kind=dp) :: t_start
+     real(kind=rp) :: t_end
+     real(kind=rp) :: t_start
 
      logical :: is_forcing
      logical :: is_bc
@@ -204,8 +204,8 @@ contains
     real(kind=xp), intent(in) :: x_delta_rise, x_delta_fall
     real(kind=xp), intent(in) :: y_delta_rise, y_delta_fall
     real(kind=xp), intent(in) :: fringe_max
-    real(kind=dp), intent(in) :: t_start
-    real(kind=dp), intent(in) :: t_ramp
+    real(kind=rp), intent(in) :: t_start
+    real(kind=rp), intent(in) :: t_ramp
 
     this%xstart = xstart
     this%xend = xend
@@ -280,8 +280,8 @@ contains
     real(kind=xp), intent(in) :: ymin, ymax, ystart, yend
     real(kind=xp), intent(in) :: x_delta_rise, x_delta_fall
     real(kind=xp), intent(in) :: y_delta_rise, y_delta_fall
-    real(kind=dp), intent(in) :: t_start
-    real(kind=dp), intent(in) :: t_end
+    real(kind=rp), intent(in) :: t_start
+    real(kind=rp), intent(in) :: t_end
     real(kind=xp), intent(in), optional :: Uinf
 
     logical :: found_fst_config
@@ -333,8 +333,8 @@ contains
     real(kind=xp), intent(in) :: ymin, ymax, ystart, yend
     real(kind=xp), intent(in) :: x_delta_rise, x_delta_fall
     real(kind=xp), intent(in) :: y_delta_rise, y_delta_fall
-    real(kind=dp), intent(in) :: t_start
-    real(kind=dp), intent(in) :: t_end
+    real(kind=rp), intent(in) :: t_start
+    real(kind=rp), intent(in) :: t_end
     logical, intent(in) :: periodic_x, periodic_y, periodic_z
     integer, intent(inout), optional :: seed
 
@@ -1176,7 +1176,7 @@ contains
     integer, intent(in) :: n ! size of the bc mask
     integer, intent(in) :: bc_mask(0:n)
     real(kind=rp), intent(in), dimension(:,:,:,:) :: x, y, z
-    real(kind=dp), intent(in) :: t
+    real(kind=rp), intent(in) :: t
     real(kind=rp), intent(inout), dimension(:,:,:,:) :: u_bc, v_bc, w_bc
     real(kind=xp), intent(in) :: angleXY
     logical, intent(in) :: on_host
@@ -1267,18 +1267,18 @@ contains
   !
   ! Linear ramp in time
   function time_ramp(t, t_end, t_start) result(ramp)
-    real(kind=dp), intent(in) :: t
-    real(kind=dp), intent(in) :: t_end
-    real(kind=dp), intent(in) :: t_start
+    real(kind=rp), intent(in) :: t
+    real(kind=rp), intent(in) :: t_end
+    real(kind=rp), intent(in) :: t_start
 
-    real(kind=dp) :: ramp
+    real(kind=rp) :: ramp
 
     if (t .le. t_start) then
-       ramp = 0.0_dp
+       ramp = 0.0_rp
     else if (t .lt. t_end) then
        ramp = (t - t_start)/(t_end - t_start)
     else
-       ramp = 1.0_dp
+       ramp = 1.0_rp
     end if
 
   end function time_ramp

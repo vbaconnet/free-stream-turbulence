@@ -47,7 +47,7 @@ contains
 
   !> Initialize user variables or external objects
   subroutine fst_bc_driver_initialize(t, u, v, w, p, coef, params)
-    real(kind=dp) :: t
+    real(kind=rp) :: t
     type(field_t), intent(inout) :: u
     type(field_t), intent(inout) :: v
     type(field_t), intent(inout) :: w
@@ -101,7 +101,7 @@ contains
     !
     block
       real(kind=xp) :: Uinf, Tu, L, k_start, k_end
-      real(kind=dp) :: t_ramp, t_start
+      real(kind=rp) :: t_ramp, t_start
       integer :: Nshells, Npmax, seed
       character(len=:), allocatable :: read_path
 
@@ -110,7 +110,7 @@ contains
         READ_FROM_FILES, .false.)
 
       ! Read parameters for the FST fringe in time
-      call json_get_or_default(params, "case.FST.t_start", t_start, 0.0_dp)
+      call json_get_or_default(params, "case.FST.t_start", t_start, 0.0_rp)
       call json_get(params, "case.FST.t_ramp", t_ramp)
 
       ! Read the path to the output files and create the directory if it does not exist
@@ -172,7 +172,7 @@ contains
     type(field_t), intent(inout) :: w
     class(bc_t), intent(in) :: bc
     type(coef_t), intent(inout) :: coef
-    real(kind=dp), intent(in) :: t
+    real(kind=rp), intent(in) :: t
     integer, intent(in) :: tstep
     real(kind=xp), intent(in) :: angle
     logical, intent(in), optional :: on_cpu

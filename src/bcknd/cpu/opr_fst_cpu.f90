@@ -32,7 +32,7 @@
 !
 !> Operators CPU backend
 module opr_fst_cpu
-  use num_types, only : rp, dp, xp
+  use num_types, only : rp, xp
   implicit none
   private
 
@@ -47,7 +47,7 @@ contains
             random_vectors, cosa, sina, fringe_time, fringe_space)
 
     real(kind=rp), intent(inout), dimension(:,:,:,:) :: u, v, w
-    real(kind=dp), intent(in) :: t
+    real(kind=rp), intent(in) :: t
     real(kind=rp), intent(in) :: u_baseflow(:), v_baseflow(:), w_baseflow(:)
     integer, intent(in) :: n_mask, n_total_modes
     integer, intent(in) :: mask(0:n_mask), shell(:)
