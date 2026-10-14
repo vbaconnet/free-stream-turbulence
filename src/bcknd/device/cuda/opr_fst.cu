@@ -46,7 +46,7 @@
  */
 template<typename D, typename T, typename U>
 __global__ void fst_kernel(
-                           const D t,
+                           const T t,
                            const U Uinf,
                            T * __restrict__ u,
                            T * __restrict__ v,
@@ -71,7 +71,7 @@ __global__ void fst_kernel(
   const int idx = blockIdx.x * blockDim.x + threadIdx.x;
   const int str = blockDim.x * gridDim.x;
 
-  U ra, rb, rc;
+  U ra, rb, rc, uproj, vproj, wproj;
   U phi = 0.0;
   U phi_t = Uinf*t;
   U pert = 0.0;
@@ -89,28 +89,28 @@ __global__ void fst_kernel(
     for (int m = 0; m < n_total_modes; m += 1) {
 
       phi = phi_0[m + i*n_total_modes] - k_x[m] * phi_t;
-      //shellno = shell[m];
-
       pert = shell_amp[shell[m]-1]*sin(phi);
-      //ra += randvec[m + 0*n_total_modes]*pert;
-      //rb += randvec[m + 1*n_total_modes]*pert;
-      //rc += randvec[m + 2*n_total_modes]*pert;
       ra += randvec[m + 0*n_total_modes]*pert;
       rb += randvec[m + 1*n_total_modes]*pert;
       rc += randvec[m + 2*n_total_modes]*pert;
     }
 
     f = fringe_time*fs[i];
-    u[mask[i+1]-1] = ubf[i] + f*ra;
-    v[mask[i+1]-1] = vbf[i] + f*rb;
-    w[mask[i+1]-1] = wbf[i] + f*rc;
+
+    uproj = ra*cosa - rb*sina;
+    vproj = ra*sina + rb*cosa;
+    wproj = rc;
+
+    u[mask[i+1]-1] = ubf[i] + f*uproj;
+    v[mask[i+1]-1] = vbf[i] + f*vproj;
+    w[mask[i+1]-1] = wbf[i] + f*wproj;
 
   }
 }
 
 extern "C" {
 
-void cuda_fst(double *t, real_xp *Uinf,
+void cuda_fst(float *t, real_xp *Uinf,
               void *u_d, void *v_d, void *w_d, int *mask_d, int *n_mask,
               void *ubf_d, void *vbf_d, void *wbf_d, void *k_x_d,
               int *n_total_modes, void *phi_0_d, int *shell_d,
