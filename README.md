@@ -248,7 +248,7 @@ Where $\delta_{rise} = \delta_{fall} = \alpha \cdot L_u$ and $L_u$ is the domain
 ### Temporal Ramp
 
 Gradual introduction of turbulence:
-$$\text{ramp}(t) = \begin{cases} 0 & t \leq t_{start} \\ \frac{t - t_{start}}{t_{ramp}} & t_{start} < t < t_{ramp} \\ 1 & t \geq t_{ramp} \end{cases}$$
+$$\text{ramp}(t) = \begin{cases} 0 & t \leq t_{start} \\ \frac{t - t_{start}}{t_{ramp} - t_{start}} & t_{start} < t < t_{ramp} \\ 1 & t \geq t_{ramp} \end{cases}$$
 
 ---
 
@@ -273,7 +273,7 @@ All FST parameters are specified in the case file under the `"FST"` JSON object 
 | `n_pts_per_shell` | integer | Yes** | - | Maximum number of points per shell |
 | `seed` | integer | No | `-143` | Random seed. **Must be negative** |
 | `t_start` | real | No | `0.0` | Time to start applying FST |
-| `t_ramp` | real | **Yes** | - | Duration of linear ramp. **Mandatory** |
+| `t_ramp` | real | **Yes** | - | Time at which to stop applying the time ramp (FST fully applied for `t >= t_ramp`). **Mandatory** |
 
 *Required if `read_from_files=true`
 **Required if `read_from_files=false`
