@@ -1186,65 +1186,27 @@ contains
 
     fringe_time = time_ramp(t, this%t_end, this%t_start)
 
-    call neko_rt_stats%find_region_id("FST compute", rt_id)
-    call neko_rt_stats%start_region("FST compute", rt_id)
+    ! NOTE:
+    ! The commented lines below will throw a segfault if runtime statistics 
+    ! are not enabled. This bug was fixed in PR #2769 but was not introduced
+    ! into release/1.1.
+    ! If you still want to profile the FST, uncomment the lines below
+    ! and make sure to enable runtime stats in your case file:
+    !         "case.runtime_statistics.enabled": true
+
+    !call neko_rt_stats%find_region_id("FST compute", rt_id)
+    !call neko_rt_stats%start_region("FST compute", rt_id)
     call fst_bc_compute(t, this%Uinf, u_bc, v_bc, w_bc, bc_mask, n, &
          this%u_baseflow, this%v_baseflow, this%w_baseflow, &
          this%k_x, this%n_modes, this%phi_0, this%shell, this%shell_amp, &
          this%random_vectors, angleXY, fringe_time, this%fringe_space, on_host)
-    call neko_rt_stats%end_region("FST compute", rt_id)
-
-!!$    phi_t = glb_uinf*t
-!!$    ! Loop on all points in the point zone
-!!$    do idx = 1, bc_mask(0)
-!!$
-!!$       i = bc_mask(idx)
-!!$
-!!$       !> This vector will contain the sum of all Fourier modes
-!!$       rand_vec = 0.0_rp
-!!$
-!!$       ! Sum all sin modes for each gll point
-!!$       do m = 1, this%n_modes
-!!$
-!!$          ! Random phase shifts
-!!$          !phase_shft = bb(m,1)
-!!$
-!!$          ! kx(x - U*t) + ky*y + kz*z + phi
-!!$          ! = kx*x + ky*y + kz*z - kx*U*t + phi
-!!$          !phi = k_num_all(m,1) * (x(i,1,1,1) - glb_uinf*t) + &
-!!$          !     k_num_all(m,2) *  y(i,1,1,1) + &
-!!$          !     k_num_all(m,3) *  z(i,1,1,1) + &
-!!$          !     phase_shft
-!!$
-!!$          phi = this%phi_0(m,idx) - this%k_x(m)*phi_t
-!!$
-!!$          shellno = shell(m)
-!!$
-!!$          pert = shell_amp(shellno)*sin(phi)
-!!$
-!!$          rand_vec(1) = rand_vec(1) + u_hat_pn(m,1)*pert
-!!$          rand_vec(2) = rand_vec(2) + u_hat_pn(m,2)*pert
-!!$          rand_vec(3) = rand_vec(3) + u_hat_pn(m,3)*pert
-!!$
-!!$       enddo
-!!$
-!!$       ! Project the rand_vec if there is a rotation
-!!$       urand = rand_vec(1)*cosa - rand_vec(2)*sina
-!!$       vrand = rand_vec(1)*sina + rand_vec(2)*cosa
-!!$       wrand = rand_vec(3)
-!!$
-!!$       u_bc(i,1,1,1) = this%u_baseflow(idx) + &
-!!$            fringe_time*this%fringe_space(idx)*urand
-!!$       v_bc(i,1,1,1) = this%v_baseflow(idx) + &
-!!$            fringe_time*this%fringe_space(idx)*vrand
-!!$       w_bc(i,1,1,1) = this%w_baseflow(idx) + &
-!!$            fringe_time*this%fringe_space(idx)*wrand
-!!$
-!!$    end do
+    !call neko_rt_stats%end_region("FST compute", rt_id)
 
   end subroutine FST_apply_BC
 
   ! ! Fringe function as defined in original FST.
+  ! ! ATTENTION: THIS FRINGE IS WRONG! IT IS KEPT HERE FOR 
+  ! ! LEGACY PURPOSES AND TO AVOID MAKING THIS MISTAKE AGAIN!
   ! function fringe(x, f) result(y)
   !   real(kind=rp), intent(in) :: x
   !   type(FST_t) :: f
